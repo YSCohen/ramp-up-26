@@ -1,0 +1,1 @@
+Initial ramp-up work for the "Industrial Software Development" summer class
