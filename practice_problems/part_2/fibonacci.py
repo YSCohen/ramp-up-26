@@ -1,10 +1,10 @@
 i = 1
 j = 1
 
-results = ["1","1"]
+results = ["1", "1"]
 
-for _ in range(20):
-    i,j = j, i+j
+for _ in range(18):
+    i, j = j, i + j
     results.append(str(j))
 
 print(", ".join(results))
