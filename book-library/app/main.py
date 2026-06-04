@@ -18,7 +18,7 @@ books: dict[int, Book] = {}
 # Implement a POST request at the /books/ endpoint that takes the title, author,
 # and year in the request body and returns the created book with its assigned
 # id.
-@app.post("/books", response_model=Book)
+@app.post("/books/", response_model=Book)
 def create_book(new_book: Book):
     global next_id
     new_book.id = next_id
@@ -29,7 +29,7 @@ def create_book(new_book: Book):
 
 # Implement a GET request at the /books/ endpoint that returns a list of all
 # books.
-@app.get("/books", response_model=list[Book])
+@app.get("/books/", response_model=list[Book])
 def list_books():
     return list(books.values())
 
