@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -18,12 +18,13 @@ books: dict[int, Book] = {}
 # Implement a POST request at the /books/ endpoint that takes the title, author,
 # and year in the request body and returns the created book with its assigned
 # id.
-@app.post("/books/", response_model=Book)
-def create_book(new_book: Book):
+@app.post("/books/", response_model=Book, status_code=201)
+def create_book(new_book: Book, response: Response):
     global next_id
     new_book.id = next_id
     books[next_id] = new_book
     next_id += 1
+    response.headers["Location"] = f"/books/{new_book.id}"
     return new_book
 
 
@@ -38,10 +39,9 @@ def list_books():
 # of a specific book by id.
 @app.get("/books/{id}", response_model=Book)
 def get_book(id: int):
-    book_item = books.get(id)
-    if book_item is None:
+    if id not in books:
         raise HTTPException(status_code=404, detail="Book not found")
-    return book_item
+    return books[id]
 
 
 # Implement a PUT request at the /books/{id} endpoint that takes the id in the
