@@ -1,11 +1,11 @@
 # Run
-Run each of the following commands in a separate shell
 
 #### Start Redis
 ```
-docker run --net=host redis
+docker run -p 6379:6379 -d redis
 ```
 
+Run each of the following commands in a separate shell
 #### Start the publisher API
 ```
 uv run fastapi dev publisher.py --port 8080
