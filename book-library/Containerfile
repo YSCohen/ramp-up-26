@@ -2,28 +2,18 @@ FROM ghcr.io/astral-sh/uv:alpine
 
 WORKDIR /app
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
-
-# Copy only dependency metadata first
+# Install dependencies first for better layer caching
 COPY pyproject.toml uv.lock ./
-
-# Install dependencies without the project itself for better caching
+ENV UV_LINK_MODE=copy
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
-# Copy the rest of the app after deps are installed
 COPY . /app
 
-# Final sync to install the project
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
-# Place the virtual environment's bin folder on the PATH
-ENV PATH="/app/.venv/bin:$PATH"
+EXPOSE 80/tcp
 
-EXPOSE 8080
-
-# Run the app directly using the venv's python/fastapi
-CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
-
+# Run the application.
+CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", "80", "--host", "0.0.0.0"]
