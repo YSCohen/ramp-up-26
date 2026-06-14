@@ -1,0 +1,18 @@
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
+
+WORKDIR /app
+
+# Install dependencies first for better layer caching
+COPY pyproject.toml uv.lock ./
+ENV UV_LINK_MODE=copy
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+COPY . ./
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
+
+EXPOSE 80/tcp
+
+CMD ["uv", "run", "fastapi", "run", "app/publisher.py", "--port", "80", "--host", "0.0.0.0"]

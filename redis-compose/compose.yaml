@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: docker.io/library/redis:latest
+    ports:
+      - "6379:6379"
+
+  publisher:
+    build:
+      context: .
+      dockerfile: Containerfile.publisher
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    ports:
+      - "8000:80"
+
+  subscriber:
+    build:
+      context: .
+      dockerfile: Containerfile.subscriber
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
